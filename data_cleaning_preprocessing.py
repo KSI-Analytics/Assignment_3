@@ -1,9 +1,13 @@
 import pandas as pd
 from datasets import load_from_disk
 import os
+import re
+
+#Testing
+categories= ["All_Beauty"]
 
 #testing set
-categories= ["All_Beauty", "Amazon_Fashion"]
+#categories= ["All_Beauty", "Amazon_Fashion"]
 
 '''
 categories= [
@@ -51,6 +55,7 @@ for category in categories:
 
             #Testing
             #Before Handle Invalid / Missing Values
+            '''
             print("Before")
             print("Number of rows:", merged_data.shape[0])
             print("Number of rows where star rating is missing or not in [1–5]:", merged_data[~merged_data["rating"].isin([1.0, 2.0, 3.0, 4.0, 5.0])].shape[0])
@@ -58,7 +63,8 @@ for category in categories:
             print("Number of rows where brand is unknown:", merged_data.apply(lambda row: True if isinstance(row.get("details"), dict) and "brand" not in row["details"] and (pd.isna(row.get("store")) or row["store"].strip() == "")
                                                           else False, axis=1).sum())
             print("\n") 
-
+            '''
+            
             # Drop rows where star rating is missing or not in [1–5].
             if "rating" in merged_data.columns:
                 merged_data = merged_data[merged_data["rating"].isin([1.0, 2.0, 3.0, 4.0, 5.0])] #only keep where these are present
@@ -81,6 +87,7 @@ for category in categories:
             
             #Testing
             #After Handle Invalid / Missing Values
+            '''
             print("After")
             print("Number of rows:", merged_data.shape[0])
             print("Number of rows where star rating is missing or not in [1–5]:", merged_data[~merged_data["rating"].isin([1.0, 2.0, 3.0, 4.0, 5.0])].shape[0])
@@ -88,18 +95,38 @@ for category in categories:
             print("Number of rows where brand is unknown:", merged_data.apply(lambda row: True if isinstance(row.get("details"), dict) and "brand" not in row["details"] and (pd.isna(row.get("store")) or row["store"].strip() == "")
                                                           else False, axis=1).sum())
             print("\n")
-
+            '''
 
             #Remove Duplicates
+            '''
             print("Before removing duplicates")
             print("Number of rows:", merged_data.shape[0])
             print("\n")
-
+            '''
             merged_data = merged_data.drop_duplicates(subset=["user_id", "asin", "text"], keep= "first")
 
+            '''
             print("After removing duplicates")
             print("Number of rows:", merged_data.shape[0])
             print("\n")
+            '''
+
+            #Derived Columns
+
+            #Review Length 
+            merged_data["review_length"] = merged_data["text"].apply(lambda value: len(re.findall(r'\b\w+\b', value)))
+
+            #Testing
+            #print(merged_data.head(2))
+
+            #Year
+            #merged_data["timestamp"] = pd.to_datetime(merged_data["timestamp"], unit="ms") 
+            merged_data["year"] = pd.to_datetime(merged_data["timestamp"], unit="ms").dt.year
+
+            #Testing
+            print(merged_data[["timestamp", "year"]].head(2))
+
+
 
             files.append(merged_data)
         else:
