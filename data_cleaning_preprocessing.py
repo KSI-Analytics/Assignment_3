@@ -4,10 +4,10 @@ import os
 import re
 
 #Testing
-categories= ["All_Beauty"]
+#categories= ["All_Beauty"]
 
 #testing set
-#categories= ["All_Beauty", "Amazon_Fashion"]
+categories= ["All_Beauty", "Amazon_Fashion"]
 
 '''
 categories= [
@@ -124,14 +124,22 @@ for category in categories:
             merged_data["year"] = pd.to_datetime(merged_data["timestamp"], unit="ms").dt.year
 
             #Testing
-            print(merged_data[["timestamp", "year"]].head(2))
+            #print(merged_data[["timestamp", "year"]].head(2))
 
+            #print("Before concatenation")
+            #print(f"{category} dataset: ", merged_data.shape)
+            #print("\n")
 
-
-            files.append(merged_data)
+            files.append(merged_data)       
         else:
             print(f"No parent_asin in {category}, skipping")
     except Exception as e:
         print(f"Could not process {category}: {e}")
 
+#Unified Output
+cleaned_data= pd.concat(files, ignore_index=True)
 print("All categories merging are completed")
+
+#Testing
+#print("After concatenation")
+#print("Full dataset: ", cleaned_data.shape)
