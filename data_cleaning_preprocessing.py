@@ -89,6 +89,18 @@ for category in categories:
                                                           else False, axis=1).sum())
             print("\n")
 
+
+            #Remove Duplicates
+            print("Before removing duplicates")
+            print("Number of rows:", merged_data.shape[0])
+            print("\n")
+
+            merged_data = merged_data.drop_duplicates(subset=["user_id", "asin", "text"], keep= "first")
+
+            print("After removing duplicates")
+            print("Number of rows:", merged_data.shape[0])
+            print("\n")
+
             files.append(merged_data)
         else:
             print(f"No parent_asin in {category}, skipping")
